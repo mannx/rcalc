@@ -11,8 +11,10 @@ enum Operation {
     Sub,
     Mul,
     Div,
-    Sum, // Sum the entire stack togther
-    Clear,
+    Sum,   // Sum the entire stack togther
+    Clear, // clear the entire stack
+    Drop,  // drop the top most item
+    Swap,  // swap the top 2 items
 }
 
 static OPERATION_PARSE: phf::Map<&'static str, Operation> = phf_map! {
@@ -20,8 +22,10 @@ static OPERATION_PARSE: phf::Map<&'static str, Operation> = phf_map! {
     "-" => Operation::Sub,
     "*" => Operation::Mul,
     "/" => Operation::Div,
-    "s" => Operation::Sum,
+    "=" => Operation::Sum,
     "c" => Operation::Clear,
+    "d" => Operation::Drop,
+    "s" => Operation::Swap,
 };
 
 fn get_val(input: &str) -> Option<f64> {
@@ -91,7 +95,7 @@ fn div_op(rhs: f64, lhs: f64) -> f64 {
     lhs / rhs
 }
 
-fn math_func(stack: &mut Vec<f64>, f: fn(f64, f64) -> f64) -> Option<f64> {
+fn get_top2(stack: &mut Vec<f64>) -> Option<(f64, f64)> {
     let a = match stack.pop() {
         Some(n) => n,
         None => return None,
@@ -99,6 +103,26 @@ fn math_func(stack: &mut Vec<f64>, f: fn(f64, f64) -> f64) -> Option<f64> {
 
     let b = match stack.pop() {
         Some(n) => n,
+        None => return None,
+    };
+
+    return Some((a, b));
+}
+
+fn math_func(stack: &mut Vec<f64>, f: fn(f64, f64) -> f64) -> Option<f64> {
+    // let a = match stack.pop() {
+    //     Some(n) => n,
+    //     None => return None,
+    // };
+
+    // let b = match stack.pop() {
+    //     Some(n) => n,
+    //     None => return None,
+    // };
+
+    // return Some(f(a, b));
+    let (a, b) = match get_top2(stack) {
+        Some((a, b)) => (a, b),
         None => return None,
     };
 
@@ -111,6 +135,22 @@ fn sum_op(stack: &mut Vec<f64>) -> Option<f64> {
     return Some(total);
 }
 
+// swap_stacks swaps the top 2 items on the stack, returns false if error or less than 2 items
+fn swap_stack(stack: &mut Vec<f64>) -> bool {
+    if stack.len() < 2 {
+        return false;
+    }
+
+    let (a, b) = match get_top2(stack) {
+        Some((a, b)) => (a, b),
+        None => return false,
+    };
+
+    stack.push(a);
+    stack.push(b);
+    return true;
+}
+
 fn do_op(stack: &mut Vec<f64>, op: &Operation) -> Result<bool, &'static str> {
     // match block for functions that don't return any data
     // if we return true, skip the rest of the function
@@ -119,6 +159,11 @@ fn do_op(stack: &mut Vec<f64>, op: &Operation) -> Result<bool, &'static str> {
             stack.clear();
             true
         }
+        Operation::Drop => {
+            stack.pop();
+            true
+        }
+        Operation::Swap => swap_stack(stack),
         _ => false,
     };
 
