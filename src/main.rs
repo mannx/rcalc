@@ -15,6 +15,7 @@ enum Operation {
     Clear, // clear the entire stack
     Drop,  // drop the top most item
     Swap,  // swap the top 2 items
+    Dup,   // duplicate the top item
 }
 
 static OPERATION_PARSE: phf::Map<&'static str, Operation> = phf_map! {
@@ -26,6 +27,7 @@ static OPERATION_PARSE: phf::Map<&'static str, Operation> = phf_map! {
     "c" => Operation::Clear,
     "d" => Operation::Drop,
     "s" => Operation::Swap,
+    "."=>Operation::Dup,
 };
 
 fn get_val(input: &str) -> Option<f64> {
@@ -84,7 +86,7 @@ fn add_op(rhs: f64, lhs: f64) -> f64 {
 }
 
 fn sub_op(rhs: f64, lhs: f64) -> f64 {
-    rhs - lhs
+    lhs - rhs
 }
 
 fn mul_op(rhs: f64, lhs: f64) -> f64 {
@@ -164,6 +166,15 @@ fn do_op(stack: &mut Vec<f64>, op: &Operation) -> Result<bool, &'static str> {
             true
         }
         Operation::Swap => swap_stack(stack),
+        Operation::Dup => {
+            if stack.len() > 0 {
+                stack.push(stack[stack.len() - 1]);
+                true
+            } else {
+                return Err("Empty Stack");
+            }
+        }
+
         _ => false,
     };
 
