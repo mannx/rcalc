@@ -1,6 +1,4 @@
 #![allow(non_snake_case)]
-// use std::io;
-// use std::io::Write;
 
 mod math_func;
 mod operation;

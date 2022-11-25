@@ -1,5 +1,22 @@
 use crate::prelude::*;
 
+// duplicate the nth item to the top of the stack
+// top of stack gives an index to which item to copy
+// 0 -> TOS, 1 -> TOS-1, etc
+fn do_nth(stack: &mut Vec<f64>) -> Result<(), &'static str> {
+    let idx = match stack.pop() {
+        Some(n) => n,
+        None => return Err("Empty Stack"),
+    } as usize;
+
+    match stack.get(idx) {
+        Some(n) => stack.push(*n),
+        None => return Err("Nth index out of bounds"),
+    }
+
+    Ok(())
+}
+
 pub fn do_op(stack: &mut Vec<f64>, op: &Operation) -> Result<bool, &'static str> {
     // match block for functions that don't return any data
     // if we return true, skip the rest of the function
@@ -21,6 +38,10 @@ pub fn do_op(stack: &mut Vec<f64>, op: &Operation) -> Result<bool, &'static str>
                 return Err("Empty Stack");
             }
         }
+        Operation::Nth => match do_nth(stack) {
+            Ok(()) => true,
+            Err(e) => return Err(e),
+        },
         Operation::Help => {
             show_help();
             true

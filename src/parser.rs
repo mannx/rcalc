@@ -1,4 +1,4 @@
-use crate::prelude::*;
+// use crate::prelude::*;
 use phf::phf_map;
 
 #[derive(PartialEq, Clone)]
@@ -13,20 +13,22 @@ pub enum Operation {
     Drop,  // drop the top most item
     Swap,  // swap the top 2 items
     Dup,   // duplicate the top item
+    Nth,   // duplicate the nth item to the top of the stack (TOS -> nth)
     Help,  // show commands available
 }
 
 pub static OPERATION_PARSE: phf::Map<&'static str, (Operation, &'static str)> = phf_map! {
-    "+" => (Operation::Add,"Add"),
-    "-" => (Operation::Sub,"Sub"),
-    "*" => (Operation::Mul,"Multiply"),
-    "/" => (Operation::Div,"Division"),
-    "=" => (Operation::Sum,"Sum entire stack"),
-    "c" => (Operation::Clear,"Clear entire stack"),
-    "d" => (Operation::Drop,"Drop top item"),
-    "s" => (Operation::Swap,"Swap top 2 items"),
-    "." => (Operation::Dup,"Duplicate top item"),
-    "?"=>(Operation::Help,"Show commands available"),
+    "+" => (Operation::Add, "Add"),
+    "-" => (Operation::Sub, "Sub"),
+    "*" => (Operation::Mul, "Multiply"),
+    "/" => (Operation::Div, "Division"),
+    "=" => (Operation::Sum, "Sum entire stack"),
+    "c" => (Operation::Clear, "Clear entire stack"),
+    "d" => (Operation::Drop, "Drop top item"),
+    "s" => (Operation::Swap, "Swap top 2 items"),
+    "." => (Operation::Dup, "Duplicate top item"),
+    "n" => (Operation::Nth, "Duplicate the Nth item on the stack to the top"),
+    "?" => ( Operation::Help,"Show commands available"),
 };
 
 fn get_val(input: &str) -> Option<f64> {
