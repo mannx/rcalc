@@ -21,6 +21,7 @@ pub static OPERATION_PARSE: phf::Map<&'static str, (Operation, &'static str)> = 
     "+" => (Operation::Add, "Add"),
     "-" => (Operation::Sub, "Sub"),
     "*" => (Operation::Mul, "Multiply"),
+    "x" => (Operation::Mul, "Multiply"),
     "/" => (Operation::Div, "Division"),
     "=" => (Operation::Sum, "Sum entire stack"),
     "c" => (Operation::Clear, "Clear entire stack"),
