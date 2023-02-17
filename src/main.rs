@@ -46,7 +46,7 @@ fn main() {
             let val = parse_input(&inp);
             match val {
                 None => {
-                    println!("< --INVALID INPUT --");
+                    println!("< --INVALID INPUT -- ? to see all options");
                     continue;
                 }
                 Some(op) => match op {
