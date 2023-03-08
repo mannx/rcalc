@@ -4,10 +4,14 @@ use crate::prelude::*;
 // top of stack gives an index to which item to copy
 // 0 -> TOS, 1 -> TOS-1, etc
 fn do_nth(stack: &mut Vec<f64>) -> Result<(), &'static str> {
-    let idx = match stack.pop() {
+    let id = match stack.pop() {
         Some(n) => n,
         None => return Err("Empty Stack"),
     } as usize;
+
+    // idx should be 0 for last item on the Stack
+    // subtract 1 to make sure in range
+    let idx = stack.len() - id - 1;
 
     match stack.get(idx) {
         Some(n) => stack.push(*n),
